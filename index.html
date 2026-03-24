@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Prescrição Optométrica</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Source+Sans+3:wght@300;400;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --navy: #1a2f5a;
+      --blue: #2563a8;
+      --light-blue: #dbeafe;
+      --accent: #3b82c4;
+      --border: #c8d8ee;
+      --text: #1e293b;
+      --muted: #64748b;
+      --bg: #f8fafc;
+      --data-color: #111111;
+      --data-size: 14px;
+      --data-weight: 600;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Source Sans 3', sans-serif;
+      background: var(--bg);
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      min-height: 100vh;
+      padding: 30px 20px;
+      color: var(--text);
+    }
+
+    .page {
+      background: #fff;
+      width: 100%;
+      max-width: 760px;
+      border-radius: 4px;
+      box-shadow: 0 4px 30px rgba(0,0,0,0.10);
+      overflow: hidden;
+      position: relative;
+    }
+
+    /* ── HEADER ── */
+    .header {
+      background: var(--navy);
+      padding: 28px 40px 24px;
+      display: flex;
+      align-items: center;
+    }
+
+    .header-text h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: 26px;
+      color: #fff;
+      letter-spacing: 1px;
+      line-height: 1.1;
+    }
+
+    .header-text p {
+      font-size: 11px;
+      color: rgba(255,255,255,0.6);
+      margin-top: 5px;
+      max-width: 420px;
+      line-height: 1.5;
+    }
+
+    .header-date {
+      margin-left: auto;
+      text-align: right;
+      flex-shrink: 0;
+    }
+
+    .header-date .label {
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      color: rgba(255,255,255,0.5);
+    }
+
+    .header-date .value {
+      font-size: var(--data-size);
+      color: #fff;
+      font-weight: var(--data-weight);
+      margin-top: 2px;
+    }
+
+    /* ── DECORATIVE STRIPE ── */
+    .stripe {
+      height: 4px;
+      background: linear-gradient(90deg, #3b82c4, #60a5fa, #93c5fd);
+    }
+
+    /* ── BODY ── */
+    .body {
+      padding: 32px 40px 36px;
+    }
+
+    /* PATIENT INFO */
+    .patient-block {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 12px;
+      align-items: end;
+      margin-bottom: 28px;
+      padding-bottom: 22px;
+      border-bottom: 1.5px solid var(--border);
+    }
+
+    .field-group { display: flex; flex-direction: column; gap: 3px; }
+
+    .field-label {
+      font-size: 9.5px;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      color: var(--muted);
+      font-weight: 600;
+    }
+
+    .field-value {
+      font-size: var(--data-size) !important;
+      font-weight: var(--data-weight);
+      color: var(--data-color) !important;
+      letter-spacing: 0.3px;
+    }
+
+    .badge {
+      background: var(--light-blue);
+      color: var(--blue);
+      border: 1px solid var(--accent);
+      border-radius: 20px;
+      padding: 5px 16px;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      white-space: nowrap;
+      align-self: center;
+    }
+
+    .meta-row {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+      margin-bottom: 28px;
+    }
+
+    .meta-card {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 10px 14px;
+    }
+
+    /* PRESCRIPTION TABLE */
+    .section-title {
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: var(--muted);
+      font-weight: 700;
+      margin-bottom: 10px;
+    }
+
+    .rx-table {
+      width: 100%;
+      border-collapse: collapse;
+      border-radius: 8px;
+      overflow: hidden;
+      border: 1.5px solid var(--border);
+      margin-bottom: 22px;
+    }
+
+    .rx-table thead tr {
+      background: var(--navy);
+    }
+
+    .rx-table thead th {
+      padding: 11px 14px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 1.2px;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.85);
+      text-align: center;
+    }
+
+    .rx-table thead th:first-child {
+      text-align: left;
+      width: 80px;
+    }
+
+    .rx-table tbody tr {
+      border-bottom: 1px solid var(--border);
+    }
+
+    .rx-table tbody tr:last-child { border-bottom: none; }
+
+    .rx-table tbody tr:nth-child(even) { background: #f1f6fc; }
+
+    .rx-table tbody td {
+      padding: 13px 14px;
+      text-align: center;
+      font-size: var(--data-size);
+      font-weight: var(--data-weight);
+      color: var(--data-color);
+    }
+
+    .rx-table tbody td:first-child {
+      text-align: left;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: var(--muted);
+      background: #eef4fb;
+      border-right: 1px solid var(--border);
+    }
+
+    .rx-table td.empty {
+      color: #c0cfe0;
+      font-size: var(--data-size);
+    }
+
+    /* ADDITION ROW */
+    .addition-row {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      background: var(--light-blue);
+      border: 1.5px solid var(--accent);
+      border-radius: 8px;
+      padding: 14px 20px;
+      margin-bottom: 22px;
+    }
+
+    .addition-row .add-label {
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: var(--blue);
+      font-weight: 700;
+    }
+
+    .addition-row .add-value {
+      font-size: var(--data-size);
+      font-weight: var(--data-weight);
+      color: var(--data-color);
+      margin-left: 4px;
+    }
+
+    .addition-row .add-desc {
+      font-size: 12px;
+      color: var(--muted);
+      margin-left: auto;
+    }
+
+    /* OBSERVAÇÃO */
+    .obs-block {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-left: 4px solid var(--accent);
+      border-radius: 6px;
+      padding: 14px 18px;
+      margin-bottom: 24px;
+    }
+
+    .obs-block .field-label { margin-bottom: 6px; }
+
+    .obs-block p {
+      font-size: var(--data-size);
+      font-weight: var(--data-weight);
+      color: var(--data-color);
+      line-height: 1.6;
+    }
+
+    /* FOOTER */
+    .footer {
+      background: var(--navy);
+      padding: 18px 40px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .footer-note {
+      font-size: 10px;
+      color: rgba(255,255,255,0.5);
+      max-width: 360px;
+      line-height: 1.6;
+    }
+
+    .signature-area {
+      text-align: center;
+    }
+
+    .sig-line {
+      width: 160px;
+      border-top: 1.5px solid rgba(255,255,255,0.4);
+      margin: 0 auto 6px;
+    }
+
+    .sig-label {
+      font-size: 9.5px;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.5);
+    }
+
+    .sig-name {
+      font-size: var(--data-size);
+      color: #fff;
+      font-weight: var(--data-weight);
+      margin-top: 2px;
+    }
+
+    /* WATERMARK */
+    .watermark {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) rotate(-30deg);
+      font-family: 'Playfair Display', serif;
+      font-size: 80px;
+      color: rgba(37, 99, 168, 0.04);
+      pointer-events: none;
+      white-space: nowrap;
+      letter-spacing: 8px;
+      text-transform: uppercase;
+    }
+
+    /* PRINT BUTTON */
+    .print-btn {
+      position: fixed;
+      bottom: 28px;
+      right: 28px;
+      background: var(--navy);
+      color: #fff;
+      border: none;
+      border-radius: 50px;
+      padding: 14px 28px;
+      font-family: 'Source Sans 3', sans-serif;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      box-shadow: 0 4px 20px rgba(26,47,90,0.35);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: background 0.2s, transform 0.15s;
+      z-index: 9999;
+    }
+
+    .print-btn:hover { background: #2563a8; transform: translateY(-2px); }
+
+    /* PRINT */
+    @media print {
+      :root {
+        --navy: #1a2f5a;
+        --blue: #2563a8;
+        --light-blue: #dbeafe;
+        --accent: #3b82c4;
+      }
+
+      body {
+        background: #fff;
+        padding: 0;
+      }
+
+      .page {
+        box-shadow: none;
+        border-radius: 0;
+        max-width: 100%;
+        width: 100%;
+      }
+
+      .header {
+        background: var(--navy) !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+      }
+
+      .stripe {
+        background: linear-gradient(90deg, #3b82c4, #60a5fa, #93c5fd) !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+      }
+
+      .rx-table thead tr {
+        background: var(--navy) !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+      }
+
+      .rx-table tbody tr:nth-child(even) {
+        background: #f1f6fc !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+      }
+
+      .addition-row {
+        background: var(--light-blue) !important;
+        border-color: var(--accent) !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+      }
+
+      .footer {
+        background: var(--navy) !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+      }
+
+      .print-btn {
+        display: none !important;
+      }
+
+      /* Garante que textos em branco continuem visíveis */
+      .header-text h1,
+      .header-text p,
+      .header-date .label,
+      .header-date .value,
+      .footer-note,
+      .sig-label,
+      .sig-name {
+        color: #fff !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+      }
+    }
+  </style>
+</head>
+<body>
+<div class="watermark">Optometria</div>
+
+<div class="page">
+
+  <div class="header">
+    <div class="header-text">
+      <h1>Prescrição Optométrica</h1>
+      <p>Exame efetuado pelo optometrista. A validade é de 1 (um) ano a partir da data de emissão.</p>
+    </div>
+    <div class="header-date">
+      <div class="label">Emitido em</div>
+      <div class="value" id="data">—</div>
+    </div>
+  </div>
+
+  <div class="stripe"></div>
+
+  <div class="body">
+
+    <!-- PATIENT -->
+    <div class="patient-block">
+      <div class="field-group">
+        <span class="field-label">Paciente</span>
+        <span class="field-value" id="paciente">—</span>
+      </div>
+      <div class="badge" id="tipo">—</div>
+    </div>
+
+    <!-- META -->
+    <div class="meta-row">
+      <div class="meta-card">
+        <div class="field-label">Unidade</div>
+        <div class="field-value" id="unidade">—</div>
+      </div>
+      <div class="meta-card">
+        <div class="field-label">Optometrista</div>
+        <div class="field-value" id="optometrista">—</div>
+      </div>
+    </div>
+
+    <!-- RX TABLE -->
+    <div class="section-title">Graduação</div>
+    <table class="rx-table">
+      <thead>
+        <tr>
+          <th></th>
+          <th>Esférico</th>
+          <th>Cilíndrico</th>
+          <th>Eixo</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>OD</td>
+          <td id="esf-od">—</td>
+          <td id="cil-od">—</td>
+          <td id="eixo-od">—</td>
+        </tr>
+        <tr>
+          <td>OE</td>
+          <td id="esf-oe">—</td>
+          <td id="cil-oe">—</td>
+          <td id="eixo-oe">—</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- ADDITION -->
+    <div class="addition-row" id="addition-block">
+      <div>
+        <div class="add-label">Adição</div>
+      </div>
+      <div class="add-value" id="adicao">—</div>
+      <div class="add-desc">Valor de adição quando multifocal</div>
+    </div>
+
+    <!-- OBSERVAÇÃO -->
+    <div class="obs-block" id="obs-block">
+      <div class="field-label">Observações do Optometrista</div>
+      <p id="observacao">—</p>
+    </div>
+
+  </div><!-- /body -->
+
+  <div class="footer">
+    <div class="footer-note">
+      * Retornar para próxima consulta após 1 (um) ano.<br>
+      * Nos primeiros 30 dias de uso das lentes é normal sentir tonturas e dores de cabeça.<br>
+      * Lentes progressivas exigem maior período de adaptação.
+    </div>
+    <div class="signature-area">
+      <div class="sig-line"></div>
+      <div class="sig-label">Assinatura</div>
+      <div class="sig-name" id="sig-name">Optometrista</div>
+    </div>
+  </div>
+
+</div><!-- /page -->
+
+<button class="print-btn" onclick="window.print()">
+  🖨️ Imprimir Receita
+</button>
+
+<script>
+  function getParam(name) {
+    const url = new URL(window.location.href);
+    return url.searchParams.get(name) || '';
+  }
+
+  function fmtNum(val) {
+    if (!val) return '—';
+    // Converte vírgula em ponto para fazer o parse correto
+    const normalized = val.toString().replace(',', '.');
+    const n = parseFloat(normalized);
+    if (isNaN(n)) return val;
+    // Formata com sinal preservando negativos: negativo mantém "-", positivo ganha "+"
+    return (n >= 0 ? '+' : '') + n.toString().replace('.', ',');
+  }
+
+  function set(id, val) {
+    const el = document.getElementById(id);
+    if (el) el.textContent = val || '—';
+  }
+
+  function setHTML(id, val) {
+    const el = document.getElementById(id);
+    if (el) el.innerHTML = val || '—';
+  }
+
+  // Populate
+  set('data',          getParam('data') || new Date().toLocaleDateString('pt-BR'));
+  set('paciente',      getParam('paciente'));
+  set('tipo',          getParam('tipo') || 'Simples');
+  set('unidade',       getParam('unidade'));
+  set('optometrista',  getParam('optometrista'));
+  set('sig-name',      getParam('optometrista') || 'Optometrista');
+  set('eixo-od',       getParam('eixo_od'));
+  set('eixo-oe',       getParam('eixo_oe'));
+
+  setHTML('esf-od',  fmtNum(getParam('esf_od')));
+  setHTML('cil-od',  fmtNum(getParam('cil_od')));
+  setHTML('esf-oe',  fmtNum(getParam('esf_oe')));
+  setHTML('cil-oe',  fmtNum(getParam('cil_oe')));
+
+  const adicao = getParam('adicao');
+  setHTML('adicao', adicao ? fmtNum(adicao) : '—');
+
+  const obs = getParam('obs');
+  set('observacao', obs || '—');
+</script>
+</body>
+</html>
