@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Prescrição Optométrica</title>
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Source+Sans+3:wght@300;400;600;700&display=swap" rel="stylesheet" />
+
   <style>
     :root {
       --navy: #1a2f5a;
@@ -23,7 +23,7 @@
     * { box-sizing: border-box; margin: 0; padding: 0; }
 
     body {
-      font-family: 'Source Sans 3', sans-serif;
+      font-family: Arial, Helvetica, sans-serif;
       background: var(--bg);
       display: flex;
       justify-content: center;
@@ -45,23 +45,24 @@
 
     /* ── HEADER ── */
     .header {
-      background: var(--navy);
+      background: #f1f5f9;
+      border-bottom: 1.5px solid var(--border);
       padding: 28px 40px 24px;
       display: flex;
       align-items: center;
     }
 
     .header-text h1 {
-      font-family: 'Playfair Display', serif;
-      font-size: 26px;
-      color: #fff;
-      letter-spacing: 1px;
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 22px;
+      color: var(--navy);
+      letter-spacing: 0.5px;
       line-height: 1.1;
     }
 
     .header-text p {
       font-size: 11px;
-      color: rgba(255,255,255,0.6);
+      color: var(--muted);
       margin-top: 5px;
       max-width: 420px;
       line-height: 1.5;
@@ -77,12 +78,12 @@
       font-size: 10px;
       text-transform: uppercase;
       letter-spacing: 1.5px;
-      color: rgba(255,255,255,0.5);
+      color: var(--muted);
     }
 
     .header-date .value {
       font-size: var(--data-size);
-      color: #fff;
+      color: var(--navy);
       font-weight: var(--data-weight);
       margin-top: 2px;
     }
@@ -229,18 +230,18 @@
       display: flex;
       align-items: center;
       gap: 14px;
-      background: var(--light-blue);
-      border: 1.5px solid var(--accent);
+      background: #f8fafc;
+      border: 1px solid var(--border);
       border-radius: 8px;
-      padding: 14px 20px;
+      padding: 12px 20px;
       margin-bottom: 22px;
     }
 
     .addition-row .add-label {
       font-size: 10px;
       text-transform: uppercase;
-      letter-spacing: 2px;
-      color: var(--blue);
+      letter-spacing: 1.5px;
+      color: var(--muted);
       font-weight: 700;
     }
 
@@ -252,9 +253,18 @@
     }
 
     .addition-row .add-desc {
-      font-size: 12px;
-      color: var(--muted);
+      font-size: 11px;
+      color: #94a3b8;
       margin-left: auto;
+    }
+
+    /* BULLETS */
+    .obs-bullets {
+      font-size: 11px;
+      color: var(--muted);
+      line-height: 1.9;
+      margin-bottom: 24px;
+      padding: 0 4px;
     }
 
     /* OBSERVAÇÃO */
@@ -264,7 +274,8 @@
       border-left: 4px solid var(--accent);
       border-radius: 6px;
       padding: 14px 18px;
-      margin-bottom: 24px;
+      margin-bottom: 16px;
+      min-height: 100px;
     }
 
     .obs-block .field-label { margin-bottom: 6px; }
@@ -278,7 +289,8 @@
 
     /* FOOTER */
     .footer {
-      background: var(--navy);
+      background: #f1f5f9;
+      border-top: 1.5px solid var(--border);
       padding: 18px 40px;
       display: flex;
       justify-content: space-between;
@@ -287,33 +299,37 @@
 
     .footer-note {
       font-size: 10px;
-      color: rgba(255,255,255,0.5);
+      color: var(--muted);
       max-width: 360px;
       line-height: 1.6;
     }
 
     .signature-area {
       text-align: center;
-    }
-
-    .sig-line {
-      width: 160px;
-      border-top: 1.5px solid rgba(255,255,255,0.4);
-      margin: 0 auto 6px;
-    }
-
-    .sig-label {
-      font-size: 9.5px;
-      letter-spacing: 1.5px;
-      text-transform: uppercase;
-      color: rgba(255,255,255,0.5);
+      padding-left: 24px;
+      border-left: 1px solid var(--border);
     }
 
     .sig-name {
-      font-size: var(--data-size);
-      color: #fff;
-      font-weight: var(--data-weight);
+      font-size: 13px;
+      color: var(--navy);
+      font-weight: 700;
+      letter-spacing: 0.3px;
+    }
+
+    .sig-role {
+      font-size: 10px;
+      color: var(--muted);
       margin-top: 2px;
+      letter-spacing: 0.3px;
+    }
+
+    .sig-validated {
+      font-size: 9px;
+      color: #94a3b8;
+      margin-top: 5px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
     }
 
     /* WATERMARK */
@@ -322,7 +338,7 @@
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%) rotate(-30deg);
-      font-family: 'Playfair Display', serif;
+      font-family: Arial, Helvetica, sans-serif;
       font-size: 80px;
       color: rgba(37, 99, 168, 0.04);
       pointer-events: none;
@@ -341,7 +357,7 @@
       border: none;
       border-radius: 50px;
       padding: 14px 28px;
-      font-family: 'Source Sans 3', sans-serif;
+      font-family: Arial, Helvetica, sans-serif;
       font-size: 14px;
       font-weight: 600;
       cursor: pointer;
@@ -377,7 +393,8 @@
       }
 
       .header {
-        background: var(--navy) !important;
+        background: #f1f5f9 !important;
+        border-bottom: 1.5px solid var(--border) !important;
         -webkit-print-color-adjust: exact !important;
         print-color-adjust: exact !important;
       }
@@ -401,14 +418,15 @@
       }
 
       .addition-row {
-        background: var(--light-blue) !important;
-        border-color: var(--accent) !important;
+        background: #f8fafc !important;
+        border-color: var(--border) !important;
         -webkit-print-color-adjust: exact !important;
         print-color-adjust: exact !important;
       }
 
       .footer {
-        background: var(--navy) !important;
+        background: #f1f5f9 !important;
+        border-top: 1.5px solid var(--border) !important;
         -webkit-print-color-adjust: exact !important;
         print-color-adjust: exact !important;
       }
@@ -417,18 +435,7 @@
         display: none !important;
       }
 
-      /* Garante que textos em branco continuem visíveis */
-      .header-text h1,
-      .header-text p,
-      .header-date .label,
-      .header-date .value,
-      .footer-note,
-      .sig-label,
-      .sig-name {
-        color: #fff !important;
-        -webkit-print-color-adjust: exact !important;
-        print-color-adjust: exact !important;
-      }
+      /* Header is now light, no white text overrides needed */
     }
   </style>
 </head>
@@ -462,14 +469,10 @@
     </div>
 
     <!-- META -->
-    <div class="meta-row">
+    <div class="meta-row" style="grid-template-columns: 1fr;">
       <div class="meta-card">
         <div class="field-label">Unidade</div>
         <div class="field-value" id="unidade">—</div>
-      </div>
-      <div class="meta-card">
-        <div class="field-label">Optometrista</div>
-        <div class="field-value" id="optometrista">—</div>
       </div>
     </div>
 
@@ -506,27 +509,36 @@
         <div class="add-label">Adição</div>
       </div>
       <div class="add-value" id="adicao">—</div>
-      <div class="add-desc">Valor de adição quando multifocal</div>
+      <div class="add-desc">Valor da adição para lentes progressivas.</div>
     </div>
 
     <!-- OBSERVAÇÃO -->
     <div class="obs-block" id="obs-block">
       <div class="field-label">Observações do Optometrista</div>
-      <p id="observacao">—</p>
+      <p id="observacao"></p>
+    </div>
+
+    <!-- BULLETS -->
+    <div class="obs-bullets">
+      <p id="bullets-retorno"></p>
+      <p>* Nos primeiros 30 dias de uso das lentes é normal sentir tonturas e dores de cabeça.</p>
+      <p>* Lentes progressivas exigem maior período de adaptação.</p>
+      <p>* Indicação técnica: Lentes com filtro de luz azul (proteção de telas) e tratamento fotossensível (conforto visual e sensibilidade à luz).</p>
     </div>
 
   </div><!-- /body -->
 
   <div class="footer">
     <div class="footer-note">
-      * Retornar para próxima consulta após 1 (um) ano.<br>
-      * Nos primeiros 30 dias de uso das lentes é normal sentir tonturas e dores de cabeça.<br>
-      * Lentes progressivas exigem maior período de adaptação.
+      Este documento representa a avaliação fisiológica/ técnica<br>
+      conforme a CBO nº3223/ Portaria 397-09.10.2002 cc<br>
+      Formação reconhecida pelo art 22,XVl e art 5 CF cc Lei 5692-71 cc.<br>
+      Para tratamentos de patologias oculares procure um Oftalmologista.
     </div>
     <div class="signature-area">
-      <div class="sig-line"></div>
-      <div class="sig-label">Assinatura</div>
       <div class="sig-name" id="sig-name">Optometrista</div>
+      <div class="sig-role">Optometrista</div>
+      <div class="sig-validated">✓ Validado digitalmente</div>
     </div>
   </div>
 
@@ -563,11 +575,19 @@
   }
 
   // Populate
-  set('data',          getParam('data') || new Date().toLocaleDateString('pt-BR'));
+  const dataParam = getParam('data');
+  const hoje = dataParam ? new Date(dataParam.split('/').reverse().join('-')) : new Date();
+  const dataFormatada = hoje.toLocaleDateString('pt-BR');
+  set('data', dataFormatada);
+
+  // Próxima consulta em 1 ano
+  const proximaConsulta = new Date(hoje);
+  proximaConsulta.setFullYear(proximaConsulta.getFullYear() + 1);
+  const proximaFormatada = proximaConsulta.toLocaleDateString('pt-BR');
+
   set('paciente',      getParam('paciente'));
   set('tipo',          getParam('tipo') || 'Simples');
   set('unidade',       getParam('unidade'));
-  set('optometrista',  getParam('optometrista'));
   set('sig-name',      getParam('optometrista') || 'Optometrista');
   set('eixo-od',       getParam('eixo_od'));
   set('eixo-oe',       getParam('eixo_oe'));
@@ -580,8 +600,13 @@
   const adicao = getParam('adicao');
   setHTML('adicao', adicao ? fmtNum(adicao) : '—');
 
+  // Próxima consulta nos bullets
+  const elFooterRetorno = document.getElementById('bullets-retorno');
+  if (elFooterRetorno) elFooterRetorno.textContent = `* Retornar para próxima consulta em ${proximaFormatada}.`;
+
   const obs = getParam('obs');
-  set('observacao', obs || '—');
+  const elObs = document.getElementById('observacao');
+  if (elObs) elObs.textContent = obs || '';
 </script>
 </body>
 </html>
