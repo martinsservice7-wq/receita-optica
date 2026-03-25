@@ -304,10 +304,28 @@
       line-height: 1.6;
     }
 
+    /* ── SIGNATURE AREA ── */
     .signature-area {
       text-align: center;
       padding-left: 24px;
       border-left: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    /* Carimbo */
+    .stamp-wrapper {
+      display: none;
+      margin-bottom: 4px;
+    }
+
+    .stamp-wrapper img {
+      width: 120px;
+      height: 120px;
+      object-fit: contain;
+      mix-blend-mode: multiply;   /* remove fundo branco visualmente */
+      opacity: 0.92;
     }
 
     .sig-name {
@@ -431,11 +449,16 @@
         print-color-adjust: exact !important;
       }
 
+      /* Garante que o carimbo imprima com mix-blend-mode */
+      .stamp-wrapper img {
+        mix-blend-mode: multiply !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+      }
+
       .print-btn {
         display: none !important;
       }
-
-      /* Header is now light, no white text overrides needed */
     }
   </style>
 </head>
@@ -535,7 +558,12 @@
       Formação reconhecida pelo art 22,XVl e art 5 CF cc Lei 5692-71 cc.<br>
       Para tratamentos de patologias oculares procure um Oftalmologista.
     </div>
+
     <div class="signature-area">
+      <!-- Carimbo: aparece somente se o parâmetro for passado -->
+      <div class="stamp-wrapper" id="stamp-wrapper">
+        <img id="stamp-img" alt="Carimbo do Optometrista" />
+      </div>
       <div class="sig-name" id="sig-name">Optometrista</div>
       <div class="sig-role">Optometrista</div>
       <div class="sig-validated">✓ Validado digitalmente</div>
@@ -556,11 +584,9 @@
 
   function fmtNum(val) {
     if (!val) return '—';
-    // Converte vírgula em ponto para fazer o parse correto
     const normalized = val.toString().replace(',', '.');
     const n = parseFloat(normalized);
     if (isNaN(n)) return val;
-    // Formata com sinal preservando negativos: negativo mantém "-", positivo ganha "+"
     return (n >= 0 ? '+' : '') + n.toString().replace('.', ',');
   }
 
@@ -574,9 +600,11 @@
     if (el) el.innerHTML = val || '—';
   }
 
-  // Populate
+  // ── DATA ──
   const dataParam = getParam('data');
-  const hoje = dataParam ? new Date(dataParam.split('/').reverse().join('-')) : new Date();
+  const hoje = dataParam
+    ? new Date(dataParam.split('/').reverse().join('-'))
+    : new Date();
   const dataFormatada = hoje.toLocaleDateString('pt-BR');
   set('data', dataFormatada);
 
@@ -585,28 +613,70 @@
   proximaConsulta.setFullYear(proximaConsulta.getFullYear() + 1);
   const proximaFormatada = proximaConsulta.toLocaleDateString('pt-BR');
 
-  set('paciente',      getParam('paciente'));
-  set('tipo',          getParam('tipo') || 'Simples');
-  set('unidade',       getParam('unidade'));
-  set('sig-name',      getParam('optometrista') || 'Optometrista');
-  set('eixo-od',       getParam('eixo_od'));
-  set('eixo-oe',       getParam('eixo_oe'));
+  // ── CAMPOS BÁSICOS ──
+  set('paciente',  getParam('paciente'));
+  set('tipo',      getParam('tipo') || 'Simples');
+  set('unidade',   getParam('unidade'));
+  set('sig-name',  getParam('optometrista') || 'Optometrista');
+  set('eixo-od',   getParam('eixo_od'));
+  set('eixo-oe',   getParam('eixo_oe'));
 
-  setHTML('esf-od',  fmtNum(getParam('esf_od')));
-  setHTML('cil-od',  fmtNum(getParam('cil_od')));
-  setHTML('esf-oe',  fmtNum(getParam('esf_oe')));
-  setHTML('cil-oe',  fmtNum(getParam('cil_oe')));
+  setHTML('esf-od', fmtNum(getParam('esf_od')));
+  setHTML('cil-od', fmtNum(getParam('cil_od')));
+  setHTML('esf-oe', fmtNum(getParam('esf_oe')));
+  setHTML('cil-oe', fmtNum(getParam('cil_oe')));
 
   const adicao = getParam('adicao');
   setHTML('adicao', adicao ? fmtNum(adicao) : '—');
 
-  // Próxima consulta nos bullets
-  const elFooterRetorno = document.getElementById('bullets-retorno');
-  if (elFooterRetorno) elFooterRetorno.textContent = `* Retornar para próxima consulta em ${proximaFormatada}.`;
+  // ── BULLET RETORNO ──
+  const elRetorno = document.getElementById('bullets-retorno');
+  if (elRetorno) {
+    elRetorno.textContent = `* Retornar para próxima consulta em ${proximaFormatada}.`;
+  }
 
+  // ── OBSERVAÇÃO ──
   const obs = getParam('obs');
   const elObs = document.getElementById('observacao');
   if (elObs) elObs.textContent = obs || '';
+
+  // ── CARIMBO DO GOOGLE DRIVE ──
+  // Aceita qualquer formato de link público do Drive:
+  //   https://drive.google.com/file/d/FILE_ID/view?usp=sharing
+  //   https://drive.google.com/open?id=FILE_ID
+  //   https://drive.google.com/uc?id=FILE_ID
+  // Também aceita o FILE_ID direto.
+  (function loadStamp() {
+    const raw = getParam('carimbo');
+    if (!raw) return;
+
+    // Extrai o File ID: sequência de 25+ caracteres alfanuméricos/hífen/underline
+    const match = raw.match(/[-\w]{25,}/);
+    if (!match) return;
+
+    const fileId  = match[0];
+    const img     = document.getElementById('stamp-img');
+    const wrapper = document.getElementById('stamp-wrapper');
+
+    // Tenta a URL de thumbnail do Google (não requer CORS)
+    const primaryUrl  = `https://lh3.googleusercontent.com/d/${fileId}`;
+    // Fallback: URL de exportação direta
+    const fallbackUrl = `https://drive.google.com/uc?export=view&id=${fileId}`;
+
+    img.src = primaryUrl;
+
+    img.onload = function () {
+      wrapper.style.display = 'block';
+    };
+
+    img.onerror = function () {
+      // Tenta o fallback antes de desistir
+      if (img.src !== fallbackUrl) {
+        img.src = fallbackUrl;
+      }
+      // Se o fallback também falhar, o wrapper permanece oculto (display:none)
+    };
+  })();
 </script>
 </body>
 </html>
