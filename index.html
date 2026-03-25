@@ -1,682 +1,269 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Prescrição Optométrica</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Prescrição Optométrica</title>
 
-  <style>
-    :root {
-      --navy: #1a2f5a;
-      --blue: #2563a8;
-      --light-blue: #dbeafe;
-      --accent: #3b82c4;
-      --border: #c8d8ee;
-      --text: #1e293b;
-      --muted: #64748b;
-      --bg: #f8fafc;
-      --data-color: #111111;
-      --data-size: 14px;
-      --data-weight: 600;
-    }
+<style>
+:root {
+  --navy:#1a2f5a;
+  --blue:#2563a8;
+  --light-blue:#dbeafe;
+  --accent:#3b82c4;
+  --border:#c8d8ee;
+  --text:#1e293b;
+  --muted:#64748b;
+  --bg:#f8fafc;
+  --data-color:#111;
+  --data-size:14px;
+  --data-weight:600;
+}
 
-    * { box-sizing: border-box; margin: 0; padding: 0; }
+*{box-sizing:border-box;margin:0;padding:0;}
 
-    body {
-      font-family: Arial, Helvetica, sans-serif;
-      background: var(--bg);
-      display: flex;
-      justify-content: center;
-      align-items: flex-start;
-      min-height: 100vh;
-      padding: 30px 20px;
-      color: var(--text);
-    }
+body{
+  font-family:Arial,Helvetica,sans-serif;
+  background:var(--bg);
+  display:flex;
+  justify-content:center;
+  padding:30px 20px;
+}
 
-    .page {
-      background: #fff;
-      width: 100%;
-      max-width: 760px;
-      border-radius: 4px;
-      box-shadow: 0 4px 30px rgba(0,0,0,0.10);
-      overflow: hidden;
-      position: relative;
-    }
+.page{
+  background:#fff;
+  width:100%;
+  max-width:760px;
+  box-shadow:0 4px 30px rgba(0,0,0,.1);
+  position:relative;
+}
 
-    /* ── HEADER ── */
-    .header {
-      background: #f1f5f9;
-      border-bottom: 1.5px solid var(--border);
-      padding: 28px 40px 24px;
-      display: flex;
-      align-items: center;
-    }
+/* HEADER */
+.header{
+  background:#f1f5f9;
+  padding:28px 40px 24px;
+  display:flex;
+}
 
-    .header-text h1 {
-      font-family: Arial, Helvetica, sans-serif;
-      font-size: 22px;
-      color: var(--navy);
-      letter-spacing: 0.5px;
-      line-height: 1.1;
-    }
+.header-text h1{
+  font-size:22px;
+  color:var(--navy);
+}
 
-    .header-text p {
-      font-size: 11px;
-      color: var(--muted);
-      margin-top: 5px;
-      max-width: 420px;
-      line-height: 1.5;
-    }
+.header-date{
+  margin-left:auto;
+  text-align:right;
+}
 
-    .header-date {
-      margin-left: auto;
-      text-align: right;
-      flex-shrink: 0;
-    }
+.header-date .value{
+  font-weight:600;
+}
 
-    .header-date .label {
-      font-size: 10px;
-      text-transform: uppercase;
-      letter-spacing: 1.5px;
-      color: var(--muted);
-    }
+/* BODY */
+.body{padding:32px 40px;}
 
-    .header-date .value {
-      font-size: var(--data-size);
-      color: var(--navy);
-      font-weight: var(--data-weight);
-      margin-top: 2px;
-    }
+.field-label{
+  font-size:10px;
+  text-transform:uppercase;
+  color:var(--muted);
+}
 
-    /* ── DECORATIVE STRIPE ── */
-    .stripe {
-      height: 4px;
-      background: linear-gradient(90deg, #3b82c4, #60a5fa, #93c5fd);
-    }
+.field-value{
+  font-size:var(--data-size);
+  font-weight:var(--data-weight);
+}
 
-    /* ── BODY ── */
-    .body {
-      padding: 32px 40px 36px;
-    }
+/* TABLE */
+.rx-table{
+  width:100%;
+  border-collapse:collapse;
+  margin-top:10px;
+}
 
-    /* PATIENT INFO */
-    .patient-block {
-      display: grid;
-      grid-template-columns: 1fr auto;
-      gap: 12px;
-      align-items: end;
-      margin-bottom: 28px;
-      padding-bottom: 22px;
-      border-bottom: 1.5px solid var(--border);
-    }
+.rx-table th{
+  background:var(--navy);
+  color:#fff;
+  padding:10px;
+}
 
-    .field-group { display: flex; flex-direction: column; gap: 3px; }
+.rx-table td{
+  text-align:center;
+  padding:10px;
+}
 
-    .field-label {
-      font-size: 9.5px;
-      text-transform: uppercase;
-      letter-spacing: 1.5px;
-      color: var(--muted);
-      font-weight: 600;
-    }
+/* FOOTER */
+.footer{
+  background:#f1f5f9;
+  padding:18px 40px;
+  display:flex;
+  justify-content:space-between;
+}
 
-    .field-value {
-      font-size: var(--data-size) !important;
-      font-weight: var(--data-weight);
-      color: var(--data-color) !important;
-      letter-spacing: 0.3px;
-    }
+/* SIGNATURE */
+.signature-area{
+  text-align:center;
+  padding-left:16px;
+  border-left:1px solid var(--border);
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:2px;
+}
 
-    .badge {
-      background: var(--light-blue);
-      color: var(--blue);
-      border: 1px solid var(--accent);
-      border-radius: 20px;
-      padding: 5px 16px;
-      font-size: 12px;
-      font-weight: 700;
-      letter-spacing: 1px;
-      text-transform: uppercase;
-      white-space: nowrap;
-      align-self: center;
-    }
+/* CARIMBO */
+.stamp-wrapper{
+  display:none;
+  margin-bottom:-8px;
+  width:100%;
+  display:flex;
+  justify-content:center;
+}
 
-    .meta-row {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 16px;
-      margin-bottom: 28px;
-    }
+.stamp-wrapper img{
+  width:180px;
+  max-width:100%;
+  height:auto;
+  object-fit:contain;
 
-    .meta-card {
-      background: var(--bg);
-      border: 1px solid var(--border);
-      border-radius: 6px;
-      padding: 10px 14px;
-    }
+  mix-blend-mode:multiply;
+  opacity:.95;
+  filter:contrast(1.1) brightness(.95);
+}
 
-    /* PRESCRIPTION TABLE */
-    .section-title {
-      font-size: 10px;
-      text-transform: uppercase;
-      letter-spacing: 2px;
-      color: var(--muted);
-      font-weight: 700;
-      margin-bottom: 10px;
-    }
+.sig-name{
+  font-size:13px;
+  font-weight:700;
+  margin-top:-4px;
+  color:var(--navy);
+}
 
-    .rx-table {
-      width: 100%;
-      border-collapse: collapse;
-      border-radius: 8px;
-      overflow: hidden;
-      border: 1.5px solid var(--border);
-      margin-bottom: 22px;
-    }
+.sig-role{
+  font-size:10px;
+  color:var(--muted);
+}
 
-    .rx-table thead tr {
-      background: var(--navy);
-    }
-
-    .rx-table thead th {
-      padding: 11px 14px;
-      font-size: 11px;
-      font-weight: 700;
-      letter-spacing: 1.2px;
-      text-transform: uppercase;
-      color: rgba(255,255,255,0.85);
-      text-align: center;
-    }
-
-    .rx-table thead th:first-child {
-      text-align: left;
-      width: 80px;
-    }
-
-    .rx-table tbody tr {
-      border-bottom: 1px solid var(--border);
-    }
-
-    .rx-table tbody tr:last-child { border-bottom: none; }
-
-    .rx-table tbody tr:nth-child(even) { background: #f1f6fc; }
-
-    .rx-table tbody td {
-      padding: 13px 14px;
-      text-align: center;
-      font-size: var(--data-size);
-      font-weight: var(--data-weight);
-      color: var(--data-color);
-    }
-
-    .rx-table tbody td:first-child {
-      text-align: left;
-      font-size: 12px;
-      font-weight: 700;
-      letter-spacing: 1px;
-      text-transform: uppercase;
-      color: var(--muted);
-      background: #eef4fb;
-      border-right: 1px solid var(--border);
-    }
-
-    .rx-table td.empty {
-      color: #c0cfe0;
-      font-size: var(--data-size);
-    }
-
-    /* ADDITION ROW */
-    .addition-row {
-      display: flex;
-      align-items: center;
-      gap: 14px;
-      background: #f8fafc;
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 12px 20px;
-      margin-bottom: 22px;
-    }
-
-    .addition-row .add-label {
-      font-size: 10px;
-      text-transform: uppercase;
-      letter-spacing: 1.5px;
-      color: var(--muted);
-      font-weight: 700;
-    }
-
-    .addition-row .add-value {
-      font-size: var(--data-size);
-      font-weight: var(--data-weight);
-      color: var(--data-color);
-      margin-left: 4px;
-    }
-
-    .addition-row .add-desc {
-      font-size: 11px;
-      color: #94a3b8;
-      margin-left: auto;
-    }
-
-    /* BULLETS */
-    .obs-bullets {
-      font-size: 11px;
-      color: var(--muted);
-      line-height: 1.9;
-      margin-bottom: 24px;
-      padding: 0 4px;
-    }
-
-    /* OBSERVAÇÃO */
-    .obs-block {
-      background: var(--bg);
-      border: 1px solid var(--border);
-      border-left: 4px solid var(--accent);
-      border-radius: 6px;
-      padding: 14px 18px;
-      margin-bottom: 16px;
-      min-height: 100px;
-    }
-
-    .obs-block .field-label { margin-bottom: 6px; }
-
-    .obs-block p {
-      font-size: var(--data-size);
-      font-weight: var(--data-weight);
-      color: var(--data-color);
-      line-height: 1.6;
-    }
-
-    /* FOOTER */
-    .footer {
-      background: #f1f5f9;
-      border-top: 1.5px solid var(--border);
-      padding: 18px 40px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .footer-note {
-      font-size: 10px;
-      color: var(--muted);
-      max-width: 360px;
-      line-height: 1.6;
-    }
-
-    /* ── SIGNATURE AREA ── */
-    .signature-area {
-      text-align: center;
-      padding-left: 24px;
-      border-left: 1px solid var(--border);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
-
-    /* Carimbo */
-    .stamp-wrapper {
-      display: none;
-      margin-bottom: 4px;
-    }
-
-    .stamp-wrapper img {
-      width: 120px;
-      height: 120px;
-      object-fit: contain;
-      mix-blend-mode: multiply;   /* remove fundo branco visualmente */
-      opacity: 0.92;
-    }
-
-    .sig-name {
-      font-size: 13px;
-      color: var(--navy);
-      font-weight: 700;
-      letter-spacing: 0.3px;
-    }
-
-    .sig-role {
-      font-size: 10px;
-      color: var(--muted);
-      margin-top: 2px;
-      letter-spacing: 0.3px;
-    }
-
-    .sig-validated {
-      font-size: 9px;
-      color: #94a3b8;
-      margin-top: 5px;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-    }
-
-    /* WATERMARK */
-    .watermark {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%) rotate(-30deg);
-      font-family: Arial, Helvetica, sans-serif;
-      font-size: 80px;
-      color: rgba(37, 99, 168, 0.04);
-      pointer-events: none;
-      white-space: nowrap;
-      letter-spacing: 8px;
-      text-transform: uppercase;
-    }
-
-    /* PRINT BUTTON */
-    .print-btn {
-      position: fixed;
-      bottom: 28px;
-      right: 28px;
-      background: var(--navy);
-      color: #fff;
-      border: none;
-      border-radius: 50px;
-      padding: 14px 28px;
-      font-family: Arial, Helvetica, sans-serif;
-      font-size: 14px;
-      font-weight: 600;
-      cursor: pointer;
-      box-shadow: 0 4px 20px rgba(26,47,90,0.35);
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      transition: background 0.2s, transform 0.15s;
-      z-index: 9999;
-    }
-
-    .print-btn:hover { background: #2563a8; transform: translateY(-2px); }
-
-    /* PRINT */
-    @media print {
-      :root {
-        --navy: #1a2f5a;
-        --blue: #2563a8;
-        --light-blue: #dbeafe;
-        --accent: #3b82c4;
-      }
-
-      body {
-        background: #fff;
-        padding: 0;
-      }
-
-      .page {
-        box-shadow: none;
-        border-radius: 0;
-        max-width: 100%;
-        width: 100%;
-      }
-
-      .header {
-        background: #f1f5f9 !important;
-        border-bottom: 1.5px solid var(--border) !important;
-        -webkit-print-color-adjust: exact !important;
-        print-color-adjust: exact !important;
-      }
-
-      .stripe {
-        background: linear-gradient(90deg, #3b82c4, #60a5fa, #93c5fd) !important;
-        -webkit-print-color-adjust: exact !important;
-        print-color-adjust: exact !important;
-      }
-
-      .rx-table thead tr {
-        background: var(--navy) !important;
-        -webkit-print-color-adjust: exact !important;
-        print-color-adjust: exact !important;
-      }
-
-      .rx-table tbody tr:nth-child(even) {
-        background: #f1f6fc !important;
-        -webkit-print-color-adjust: exact !important;
-        print-color-adjust: exact !important;
-      }
-
-      .addition-row {
-        background: #f8fafc !important;
-        border-color: var(--border) !important;
-        -webkit-print-color-adjust: exact !important;
-        print-color-adjust: exact !important;
-      }
-
-      .footer {
-        background: #f1f5f9 !important;
-        border-top: 1.5px solid var(--border) !important;
-        -webkit-print-color-adjust: exact !important;
-        print-color-adjust: exact !important;
-      }
-
-      /* Garante que o carimbo imprima com mix-blend-mode */
-      .stamp-wrapper img {
-        mix-blend-mode: multiply !important;
-        -webkit-print-color-adjust: exact !important;
-        print-color-adjust: exact !important;
-      }
-
-      .print-btn {
-        display: none !important;
-      }
-    }
-  </style>
+/* PRINT */
+.print-btn{
+  position:fixed;
+  bottom:20px;
+  right:20px;
+  padding:12px 20px;
+  background:var(--navy);
+  color:#fff;
+  border:none;
+  cursor:pointer;
+}
+</style>
 </head>
+
 <body>
-<div class="watermark">Optometria</div>
 
 <div class="page">
 
-  <div class="header">
-    <div class="header-text">
-      <h1>Prescrição Optométrica</h1>
-      <p>Exame efetuado pelo optometrista. A validade é de 1 (um) ano a partir da data de emissão.</p>
-    </div>
-    <div class="header-date">
-      <div class="label">Emitido em</div>
-      <div class="value" id="data">—</div>
-    </div>
+<div class="header">
+  <div class="header-text">
+    <h1>Prescrição Optométrica</h1>
   </div>
-
-  <div class="stripe"></div>
-
-  <div class="body">
-
-    <!-- PATIENT -->
-    <div class="patient-block">
-      <div class="field-group">
-        <span class="field-label">Paciente</span>
-        <span class="field-value" id="paciente">—</span>
-      </div>
-      <div class="badge" id="tipo">—</div>
-    </div>
-
-    <!-- META -->
-    <div class="meta-row" style="grid-template-columns: 1fr;">
-      <div class="meta-card">
-        <div class="field-label">Unidade</div>
-        <div class="field-value" id="unidade">—</div>
-      </div>
-    </div>
-
-    <!-- RX TABLE -->
-    <div class="section-title">Graduação</div>
-    <table class="rx-table">
-      <thead>
-        <tr>
-          <th></th>
-          <th>Esférico</th>
-          <th>Cilíndrico</th>
-          <th>Eixo</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td>OD</td>
-          <td id="esf-od">—</td>
-          <td id="cil-od">—</td>
-          <td id="eixo-od">—</td>
-        </tr>
-        <tr>
-          <td>OE</td>
-          <td id="esf-oe">—</td>
-          <td id="cil-oe">—</td>
-          <td id="eixo-oe">—</td>
-        </tr>
-      </tbody>
-    </table>
-
-    <!-- ADDITION -->
-    <div class="addition-row" id="addition-block">
-      <div>
-        <div class="add-label">Adição</div>
-      </div>
-      <div class="add-value" id="adicao">—</div>
-      <div class="add-desc">Valor da adição para lentes progressivas.</div>
-    </div>
-
-    <!-- OBSERVAÇÃO -->
-    <div class="obs-block" id="obs-block">
-      <div class="field-label">Observações do Optometrista</div>
-      <p id="observacao"></p>
-    </div>
-
-    <!-- BULLETS -->
-    <div class="obs-bullets">
-      <p id="bullets-retorno"></p>
-      <p>* Nos primeiros 30 dias de uso das lentes é normal sentir tonturas e dores de cabeça.</p>
-      <p>* Lentes progressivas exigem maior período de adaptação.</p>
-      <p>* Indicação técnica: Lentes com filtro de luz azul (proteção de telas) e tratamento fotossensível (conforto visual e sensibilidade à luz).</p>
-    </div>
-
-  </div><!-- /body -->
-
-  <div class="footer">
-    <div class="footer-note">
-      Este documento representa a avaliação fisiológica/ técnica<br>
-      conforme a CBO nº3223/ Portaria 397-09.10.2002 cc<br>
-      Formação reconhecida pelo art 22,XVl e art 5 CF cc Lei 5692-71 cc.<br>
-      Para tratamentos de patologias oculares procure um Oftalmologista.
-    </div>
-
-    <div class="signature-area">
-      <!-- Carimbo: aparece somente se o parâmetro for passado -->
-      <div class="stamp-wrapper" id="stamp-wrapper">
-        <img id="stamp-img" alt="Carimbo do Optometrista" />
-      </div>
-      <div class="sig-name" id="sig-name">Optometrista</div>
-      <div class="sig-role">Optometrista</div>
-      <div class="sig-validated">✓ Validado digitalmente</div>
-    </div>
+  <div class="header-date">
+    <div class="value" id="data"></div>
   </div>
+</div>
 
-</div><!-- /page -->
+<div class="body">
 
-<button class="print-btn" onclick="window.print()">
-  🖨️ Imprimir Receita
-</button>
+<div>
+  <div class="field-label">Paciente</div>
+  <div class="field-value" id="paciente"></div>
+</div>
+
+<table class="rx-table">
+<thead>
+<tr>
+<th></th>
+<th>Esférico</th>
+<th>Cilíndrico</th>
+<th>Eixo</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>OD</td>
+<td id="esf-od"></td>
+<td id="cil-od"></td>
+<td id="eixo-od"></td>
+</tr>
+<tr>
+<td>OE</td>
+<td id="esf-oe"></td>
+<td id="cil-oe"></td>
+<td id="eixo-oe"></td>
+</tr>
+</tbody>
+</table>
+
+</div>
+
+<div class="footer">
+
+<div>
+Documento técnico optométrico.
+</div>
+
+<div class="signature-area">
+
+<div class="stamp-wrapper" id="stamp-wrapper">
+  <img id="stamp-img">
+</div>
+
+<div class="sig-name" id="sig-name"></div>
+<div class="sig-role">Optometrista</div>
+
+</div>
+
+</div>
+
+</div>
+
+<button class="print-btn" onclick="window.print()">Imprimir</button>
 
 <script>
-  function getParam(name) {
-    const url = new URL(window.location.href);
-    return url.searchParams.get(name) || '';
-  }
+function getParam(name){
+  return new URL(window.location.href).searchParams.get(name)||'';
+}
 
-  function fmtNum(val) {
-    if (!val) return '—';
-    const normalized = val.toString().replace(',', '.');
-    const n = parseFloat(normalized);
-    if (isNaN(n)) return val;
-    return (n >= 0 ? '+' : '') + n.toString().replace('.', ',');
-  }
+function set(id,val){
+  document.getElementById(id).textContent=val||'—';
+}
 
-  function set(id, val) {
-    const el = document.getElementById(id);
-    if (el) el.textContent = val || '—';
-  }
+set('data',new Date().toLocaleDateString('pt-BR'));
+set('paciente',getParam('paciente'));
+set('sig-name',getParam('optometrista'));
 
-  function setHTML(id, val) {
-    const el = document.getElementById(id);
-    if (el) el.innerHTML = val || '—';
-  }
+set('esf-od',getParam('esf_od'));
+set('cil-od',getParam('cil_od'));
+set('eixo-od',getParam('eixo_od'));
 
-  // ── DATA ──
-  const dataParam = getParam('data');
-  const hoje = dataParam
-    ? new Date(dataParam.split('/').reverse().join('-'))
-    : new Date();
-  const dataFormatada = hoje.toLocaleDateString('pt-BR');
-  set('data', dataFormatada);
+set('esf-oe',getParam('esf_oe'));
+set('cil-oe',getParam('cil_oe'));
+set('eixo-oe',getParam('eixo_oe'));
 
-  // Próxima consulta em 1 ano
-  const proximaConsulta = new Date(hoje);
-  proximaConsulta.setFullYear(proximaConsulta.getFullYear() + 1);
-  const proximaFormatada = proximaConsulta.toLocaleDateString('pt-BR');
+/* CARIMBO */
+(function(){
+  const raw=getParam('carimbo');
+  if(!raw)return;
 
-  // ── CAMPOS BÁSICOS ──
-  set('paciente',  getParam('paciente'));
-  set('tipo',      getParam('tipo') || 'Simples');
-  set('unidade',   getParam('unidade'));
-  set('sig-name',  getParam('optometrista') || 'Optometrista');
-  set('eixo-od',   getParam('eixo_od'));
-  set('eixo-oe',   getParam('eixo_oe'));
+  const match=raw.match(/[-\w]{25,}/);
+  if(!match)return;
 
-  setHTML('esf-od', fmtNum(getParam('esf_od')));
-  setHTML('cil-od', fmtNum(getParam('cil_od')));
-  setHTML('esf-oe', fmtNum(getParam('esf_oe')));
-  setHTML('cil-oe', fmtNum(getParam('cil_oe')));
+  const fileId=match[0];
+  const img=document.getElementById('stamp-img');
+  const wrapper=document.getElementById('stamp-wrapper');
 
-  const adicao = getParam('adicao');
-  setHTML('adicao', adicao ? fmtNum(adicao) : '—');
+  img.src=`https://lh3.googleusercontent.com/d/${fileId}`;
 
-  // ── BULLET RETORNO ──
-  const elRetorno = document.getElementById('bullets-retorno');
-  if (elRetorno) {
-    elRetorno.textContent = `* Retornar para próxima consulta em ${proximaFormatada}.`;
-  }
-
-  // ── OBSERVAÇÃO ──
-  const obs = getParam('obs');
-  const elObs = document.getElementById('observacao');
-  if (elObs) elObs.textContent = obs || '';
-
-  // ── CARIMBO DO GOOGLE DRIVE ──
-  // Aceita qualquer formato de link público do Drive:
-  //   https://drive.google.com/file/d/FILE_ID/view?usp=sharing
-  //   https://drive.google.com/open?id=FILE_ID
-  //   https://drive.google.com/uc?id=FILE_ID
-  // Também aceita o FILE_ID direto.
-  (function loadStamp() {
-    const raw = getParam('carimbo');
-    if (!raw) return;
-
-    // Extrai o File ID: sequência de 25+ caracteres alfanuméricos/hífen/underline
-    const match = raw.match(/[-\w]{25,}/);
-    if (!match) return;
-
-    const fileId  = match[0];
-    const img     = document.getElementById('stamp-img');
-    const wrapper = document.getElementById('stamp-wrapper');
-
-    // Tenta a URL de thumbnail do Google (não requer CORS)
-    const primaryUrl  = `https://lh3.googleusercontent.com/d/${fileId}`;
-    // Fallback: URL de exportação direta
-    const fallbackUrl = `https://drive.google.com/uc?export=view&id=${fileId}`;
-
-    img.src = primaryUrl;
-
-    img.onload = function () {
-      wrapper.style.display = 'block';
-    };
-
-    img.onerror = function () {
-      // Tenta o fallback antes de desistir
-      if (img.src !== fallbackUrl) {
-        img.src = fallbackUrl;
-      }
-      // Se o fallback também falhar, o wrapper permanece oculto (display:none)
-    };
-  })();
+  img.onload=()=>wrapper.style.display='flex';
+})();
 </script>
+
 </body>
 </html>
