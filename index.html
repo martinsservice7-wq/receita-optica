@@ -594,7 +594,7 @@
     const normalized = val.toString().replace(',', '.');
     const n = parseFloat(normalized);
     if (isNaN(n)) return val;
-    return (n >= 0 ? '+' : '') + n.toString().replace('.', ',');
+    return (n >= 0 ? '+' : '') + n.toFixed(2).replace('.', ',');
   }
 
   function set(id, val) {
