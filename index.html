@@ -287,7 +287,7 @@
       line-height: 1.6;
     }
 
-    /* FOOTER */
+    /* ── FOOTER ── */
     .footer {
       background: #f1f5f9;
       border-top: 1.5px solid var(--border);
@@ -295,6 +295,7 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
+      gap: 24px;
     }
 
     .footer-note {
@@ -312,20 +313,34 @@
       display: flex;
       flex-direction: column;
       align-items: center;
+      flex-shrink: 0;
+      min-width: 160px;
     }
 
-    /* Carimbo */
+    /* ── STAMP ── */
     .stamp-wrapper {
-      display: none;
-      margin-bottom: 4px;
+      display: none;               /* shown by JS */
+      margin-bottom: 6px;
+      width: 100%;
+      max-width: 200px;
+      line-height: 0;
     }
 
+    /*
+      The img inside receives its final src from JS (either raw or canvas-cropped).
+      max-height keeps it from overflowing the footer;
+      width: auto + max-width: 100% lets it fill the wrapper horizontally.
+      mix-blend-mode: multiply removes the white background visually on screen.
+    */
     .stamp-wrapper img {
-      width: 120px;
-      height: 120px;
+      display: block;
+      width: auto;
+      max-width: 100%;
+      max-height: 160px;
+      height: auto;
       object-fit: contain;
-      mix-blend-mode: multiply;   /* remove fundo branco visualmente */
-      opacity: 0.92;
+      mix-blend-mode: multiply;
+      opacity: 0.93;
     }
 
     .sig-name {
@@ -398,10 +413,7 @@
         --accent: #3b82c4;
       }
 
-      body {
-        background: #fff;
-        padding: 0;
-      }
+      body { background: #fff; padding: 0; }
 
       .page {
         box-shadow: none;
@@ -449,16 +461,13 @@
         print-color-adjust: exact !important;
       }
 
-      /* Garante que o carimbo imprima com mix-blend-mode */
       .stamp-wrapper img {
         mix-blend-mode: multiply !important;
         -webkit-print-color-adjust: exact !important;
         print-color-adjust: exact !important;
       }
 
-      .print-btn {
-        display: none !important;
-      }
+      .print-btn { display: none !important; }
     }
   </style>
 </head>
@@ -560,7 +569,6 @@
     </div>
 
     <div class="signature-area">
-      <!-- Carimbo: aparece somente se o parâmetro for passado -->
       <div class="stamp-wrapper" id="stamp-wrapper">
         <img id="stamp-img" alt="Carimbo do Optometrista" />
       </div>
@@ -639,41 +647,111 @@
   const elObs = document.getElementById('observacao');
   if (elObs) elObs.textContent = obs || '';
 
-  // ── CARIMBO DO GOOGLE DRIVE ──
-  // Aceita qualquer formato de link público do Drive:
-  //   https://drive.google.com/file/d/FILE_ID/view?usp=sharing
-  //   https://drive.google.com/open?id=FILE_ID
-  //   https://drive.google.com/uc?id=FILE_ID
-  // Também aceita o FILE_ID direto.
+  // ── SMART STAMP LOADER ──
+  //
+  // Suporta dois formatos do parâmetro &carimbo=:
+  //
+  //   1. URL direta do AppSheet (recomendado):
+  //      Passe a URL completa já construída no AppSheet. Ex no AppSheet:
+  //        "&carimbo=" & ENCODEURL(
+  //          "https://www.appsheet.com/template/gettablefileurl?appName=martinsservice7-wq&tableName=SUA_TABELA&fileName="
+  //          & ENCODEURL([CARIMBO])
+  //        )
+  //
+  //   2. Link do Google Drive (legado):
+  //      O código extrai o File ID automaticamente de qualquer formato de link Drive.
+  //
+  // Após carregar, tenta recortar automaticamente as bordas brancas via Canvas.
+  // Se a imagem bloquear CORS (não permitir canvas), exibe sem recorte.
+  //
   (function loadStamp() {
     const raw = getParam('carimbo');
     if (!raw) return;
 
-    // Extrai o File ID: sequência de 25+ caracteres alfanuméricos/hífen/underline
-    const match = raw.match(/[-\w]{25,}/);
-    if (!match) return;
-
-    const fileId  = match[0];
     const img     = document.getElementById('stamp-img');
     const wrapper = document.getElementById('stamp-wrapper');
 
-    // Tenta a URL de thumbnail do Google (não requer CORS)
-    const primaryUrl  = `https://lh3.googleusercontent.com/d/${fileId}`;
-    // Fallback: URL de exportação direta
-    const fallbackUrl = `https://drive.google.com/uc?export=view&id=${fileId}`;
+    // ── Resolve a URL ──
+    let primaryUrl, fallbackUrl;
 
+    if (raw.startsWith('http')) {
+      // URL direta (AppSheet, qualquer CDN, etc.)
+      primaryUrl  = raw;
+      fallbackUrl = null;
+    } else {
+      // Tenta extrair um Google Drive File ID (25+ chars alfanum./hífen/underline)
+      const match = raw.match(/[-\w]{25,}/);
+      if (!match) return;
+      const fileId = match[0];
+      primaryUrl  = `https://lh3.googleusercontent.com/d/${fileId}`;
+      fallbackUrl = `https://drive.google.com/uc?export=view&id=${fileId}`;
+    }
+
+    // Permite canvas cross-origin quando o servidor enviar os headers corretos
+    img.crossOrigin = 'anonymous';
     img.src = primaryUrl;
 
     img.onload = function () {
+      // ── Auto-crop: remove bordas brancas/transparentes ──
+      try {
+        const cw = img.naturalWidth;
+        const ch = img.naturalHeight;
+
+        if (cw === 0 || ch === 0) throw new Error('zero size');
+
+        const canvas = document.createElement('canvas');
+        canvas.width  = cw;
+        canvas.height = ch;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0);
+
+        // getImageData lança SecurityError se CORS não for permitido
+        const { data } = ctx.getImageData(0, 0, cw, ch);
+
+        const THRESHOLD = 240; // brilho acima disso = branco
+        let minX = cw, minY = ch, maxX = 0, maxY = 0;
+
+        for (let y = 0; y < ch; y++) {
+          for (let x = 0; x < cw; x++) {
+            const i = (y * cw + x) * 4;
+            const r = data[i], g = data[i+1], b = data[i+2], a = data[i+3];
+            // Pixel de conteúdo: opaco o suficiente E não branco
+            if (a > 30 && (r < THRESHOLD || g < THRESHOLD || b < THRESHOLD)) {
+              if (x < minX) minX = x;
+              if (x > maxX) maxX = x;
+              if (y < minY) minY = y;
+              if (y > maxY) maxY = y;
+            }
+          }
+        }
+
+        if (maxX > minX && maxY > minY) {
+          const PAD = 6; // px de respiro ao redor do conteúdo
+          const sx = Math.max(0,  minX - PAD);
+          const sy = Math.max(0,  minY - PAD);
+          const sw = Math.min(cw, maxX + PAD) - sx;
+          const sh = Math.min(ch, maxY + PAD) - sy;
+
+          const out = document.createElement('canvas');
+          out.width  = sw;
+          out.height = sh;
+          out.getContext('2d').drawImage(canvas, sx, sy, sw, sh, 0, 0, sw, sh);
+
+          img.src = out.toDataURL('image/png');
+        }
+      } catch (_) {
+        // CORS bloqueou getImageData → mostra a imagem sem recorte
+        // mix-blend-mode: multiply já remove o branco visualmente
+      }
+
       wrapper.style.display = 'block';
     };
 
     img.onerror = function () {
-      // Tenta o fallback antes de desistir
-      if (img.src !== fallbackUrl) {
+      if (fallbackUrl && img.src !== fallbackUrl) {
         img.src = fallbackUrl;
       }
-      // Se o fallback também falhar, o wrapper permanece oculto (display:none)
+      // Se o fallback também falhar, wrapper permanece oculto (display:none)
     };
   })();
 </script>
