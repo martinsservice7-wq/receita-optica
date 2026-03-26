@@ -170,7 +170,7 @@
       border-collapse: collapse;
       border-radius: 8px;
       overflow: hidden;
-      border: 1.5px solid var(--border);
+      border: 2px solid #a8bdd8;
       margin-bottom: 22px;
     }
 
@@ -254,9 +254,7 @@
 
     /* override nth-child zebra on longe/perto rows */
     .rx-table tr.row-longe { background: #fff !important; }
-    .rx-table tr.row-longe:nth-child(even) { background: #f4f8fd !important; }
-    .rx-table tr.row-perto { background: #f8fafc !important; }
-    .rx-table tr.row-perto:nth-child(even) { background: #eef4fb !important; }
+    .rx-table tr.row-perto { background: #eef4fb !important; }
 
     /* ── AD row ── */
     .rx-table tr.row-ad td.ad-cell {
@@ -728,7 +726,8 @@
     const adTd = document.createElement('td');
     adTd.rowSpan = 2;
     adTd.colSpan = 3;
-    adTd.style.cssText = 'text-align:center; vertical-align:middle; font-size:var(--data-size,14px); font-weight:var(--data-weight,600); color:var(--data-color,#111); border-left:1px solid var(--border,#c8d8ee);';
+    adTd.style.cssText = 'text-align:center; vertical-align:middle; font-size:var(--data-size,14px); font-weight:var(--data-weight,600); color:var(--data-color,#111); border-left:1px solid var(--border,#c8d8ee); border-bottom:1px solid var(--border,#c8d8ee);';
+    row0.style.borderTop = '2px solid #a8bdd8';
     adTd.textContent = 'AD ' + fmtNum(adicao);
     row0.appendChild(adTd);
   }
