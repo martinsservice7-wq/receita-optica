@@ -668,6 +668,16 @@
     return url.searchParams.get(name) || '';
   }
 
+  // AppSheet às vezes envia {"Url":"https://...","LinkText":"..."} — extrai a URL limpa
+  function extractUrl(raw) {
+    if (!raw) return '';
+    try {
+      const obj = JSON.parse(raw);
+      if (obj && obj.Url) return obj.Url;
+    } catch(_) {}
+    return raw;
+  }
+
   function fmtNum(val) {
     if (!val) return '—';
     const normalized = val.toString().replace(',', '.');
@@ -782,24 +792,18 @@
     const img     = document.getElementById('stamp-img');
     const wrapper = document.getElementById('stamp-wrapper');
 
-    // ── Resolve a URL ──
     let primaryUrl, fallbackUrl;
 
     if (raw.startsWith('http')) {
-      // URL direta (AppSheet, qualquer CDN, etc.)
       primaryUrl  = raw;
       fallbackUrl = null;
     } else {
-      // Tenta extrair um Google Drive File ID (25+ chars alfanum./hífen/underline)
       const match = raw.match(/[-\w]{25,}/);
       if (!match) return;
       const fileId = match[0];
       primaryUrl  = `https://lh3.googleusercontent.com/d/${fileId}`;
       fallbackUrl = `https://drive.google.com/uc?export=view&id=${fileId}`;
     }
-
-    // Permite canvas cross-origin quando o servidor enviar os headers corretos
-    img.crossOrigin = 'anonymous';
 
     function showStamp(src) {
       // Remove handlers antes de trocar src para evitar loop infinito
@@ -876,25 +880,19 @@
 
   // ── LOGO via parâmetro &logo= (mesmo tratamento do carimbo) ──
   (function loadLogo() {
-    const raw = getParam('logo');
-    if (!raw) return;
+    const rawLogo = extractUrl(getParam('logo'));
+    if (!rawLogo) return;
 
     const img     = document.getElementById('logo-img');
     const wrapper = document.getElementById('logo-wrapper');
 
+    // Extrai File ID do Drive se necessário
     let primaryUrl, fallbackUrl;
-    if (raw.startsWith('http')) {
-      primaryUrl  = raw;
-      fallbackUrl = null;
-    } else {
-      const match = raw.match(/[-\w]{25,}/);
-      if (!match) return;
-      const fileId = match[0];
-      primaryUrl  = `https://lh3.googleusercontent.com/d/${fileId}`;
-      fallbackUrl = `https://drive.google.com/uc?export=view&id=${fileId}`;
-    }
-
-    img.crossOrigin = 'anonymous';
+    const matchLogo = rawLogo.match(/[-\w]{25,}/);
+    if (!matchLogo) return;
+    const logoId = matchLogo[0];
+    primaryUrl  = `https://lh3.googleusercontent.com/d/${logoId}`;
+    fallbackUrl = `https://drive.google.com/uc?export=view&id=${logoId}`;
 
     function showLogo(src) {
       img.onload  = null;
@@ -932,7 +930,13 @@
       } catch(_) { return null; }
     }
 
-    img.onload  = function() { showLogo(tryCrop(img) || img.src); };
+    function showLogo(src) {
+      img.onload  = null;
+      img.onerror = null;
+      img.src = src;
+      wrapper.style.display = 'flex';
+    }
+    img.onload  = function() { showLogo(img.src); };
     img.onerror = function() { if (fallbackUrl && img.src !== fallbackUrl) img.src = fallbackUrl; };
     img.src = primaryUrl;
   })();
