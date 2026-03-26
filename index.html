@@ -529,6 +529,29 @@
       }
 
       .print-btn { display: none !important; }
+
+      .rx-table tr.row-longe {
+        background: #fff !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+      }
+
+      .rx-table tr.row-perto {
+        background: #eef4fb !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+      }
+
+      .rx-table td.group-label {
+        background: #f1f5f9 !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+      }
+
+      /* Desativa o zebra padrão na impressão */
+      .rx-table tbody tr:nth-child(even) {
+        background: inherit !important;
+      }
     }
   </style>
 </head>
