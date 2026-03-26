@@ -718,7 +718,14 @@
     const cells1 = pertoRows[1].querySelectorAll('td:not(.eye-label)');
     cells0.forEach(td => { td.textContent = ''; });
     cells1.forEach(td => { td.textContent = ''; });
-    if (cells0[1]) cells0[1].textContent = 'AD ' + fmtNum(adicao);
+    if (cells0[1]) {
+      cells0[1].style.position = 'relative';
+      cells0[1].style.overflow = 'visible';
+      const span = document.createElement('span');
+      span.textContent = 'AD ' + fmtNum(adicao);
+      span.style.cssText = 'position:absolute; bottom:-0.75em; left:0; right:0; text-align:center; z-index:1;';
+      cells0[1].appendChild(span);
+    }
   }
     // ── BULLET RETORNO ──
   const elRetorno = document.getElementById('bullets-retorno');
