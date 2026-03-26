@@ -235,8 +235,11 @@
     }
 
     .rx-table td.group-label.perto {
-      background: #f1f5f9 !important;
+      background: #fff !important;
       color: var(--muted) !important;
+    }
+    .rx-table tr.row-perto td {
+      border-top: none;
     }
 
     /* eye-label: OD/OE cell — uniform style, no bold difference */
@@ -253,8 +256,26 @@
     }
 
     /* override nth-child zebra on longe/perto rows */
-    .rx-table tr.row-longe { background: #fff !important; }
-    .rx-table tr.row-perto { background: #eef4fb !important; }
+    .rx-table tr.row-longe td {
+      background: #fff !important;
+      -webkit-print-color-adjust: exact !important;
+      print-color-adjust: exact !important;
+    }
+    .rx-table tr.row-longe:nth-child(even) td {
+      background: #f4f8fd !important;
+      -webkit-print-color-adjust: exact !important;
+      print-color-adjust: exact !important;
+    }
+    .rx-table tr.row-perto td {
+      background: #e8f0f9 !important;
+      -webkit-print-color-adjust: exact !important;
+      print-color-adjust: exact !important;
+    }
+    .rx-table tr.row-perto:nth-child(even) td {
+      background: #dce8f5 !important;
+      -webkit-print-color-adjust: exact !important;
+      print-color-adjust: exact !important;
+    }
 
     /* ── AD row ── */
     .rx-table tr.row-ad td.ad-cell {
@@ -530,28 +551,7 @@
 
       .print-btn { display: none !important; }
 
-      .rx-table tr.row-longe {
-        background: #fff !important;
-        -webkit-print-color-adjust: exact !important;
-        print-color-adjust: exact !important;
-      }
-
-      .rx-table tr.row-perto {
-        background: #eef4fb !important;
-        -webkit-print-color-adjust: exact !important;
-        print-color-adjust: exact !important;
-      }
-
-      .rx-table td.group-label {
-        background: #f1f5f9 !important;
-        -webkit-print-color-adjust: exact !important;
-        print-color-adjust: exact !important;
-      }
-
-      /* Desativa o zebra padrão na impressão */
-      .rx-table tbody tr:nth-child(even) {
-        background: inherit !important;
-      }
+      /* cores já definidas com print-color-adjust nas regras principais */
     }
   </style>
 </head>
@@ -739,6 +739,10 @@
     const pertoRows = document.querySelectorAll('.row-perto');
     const cells0 = pertoRows[0].querySelectorAll('td:not(.group-label):not(.eye-label)');
     const cells1 = pertoRows[1].querySelectorAll('td:not(.eye-label)');
+    // Linha divisória entre longe e perto
+    pertoRows[0].querySelectorAll('td').forEach(td => {
+      td.style.borderTop = '2px solid #94a3b8';
+    });
     cells0.forEach(td => { td.textContent = ''; });
     cells1.forEach(td => { td.textContent = ''; });
     if (cells0[1]) {
