@@ -714,43 +714,29 @@
     setHTML('esf-od', '—'); setHTML('cil-od', '—'); set('eixo-od', '—');
     setHTML('esf-oe', '—'); setHTML('cil-oe', '—'); set('eixo-oe', '—');
   } else if (adicao) {
-    // PADRÃO com adição: perto exibe "AD +2,00" ocupando toda a célula, sem traços
-    const adFormatado = 'AD ' + fmtNum(adicao);
-    const tdPerto = document.querySelectorAll('.row-perto td.eye-label');
-    document.querySelectorAll('.row-perto').forEach((tr, i) => {
-      if (i === 0) {
-        // Primeira linha perto: mostra AD colspan
-        tr.innerHTML = tr.innerHTML; // keep group-label
-        const cells = tr.querySelectorAll('td:not(.group-label):not(.eye-label)');
-        // Replace data cells with AD spanning cell on first row only
-      }
-    });
-    // Simpler approach: fill first perto data cell with AD, hide others
+    // PADRÃO com adição: mantém OD e OE, mas as 3 colunas de dados viram
+    // uma única célula com rowspan=2 mostrando "AD +2,75"
     const pertoRows = document.querySelectorAll('.row-perto');
-    // Row 0: group-label(rowspan2) + eye-label + 3 data cells
-    // Row 1: eye-label + 3 data cells
-    // We want: on row 0, replace eye-label + 3 cells with a single colspan=4 "AD +x,xx"
-    //          on row 1, hide all data cells
+    const row0 = pertoRows[0]; // tem: group-label + eye-label + 3 data tds
+    const row1 = pertoRows[1]; // tem: eye-label + 3 data tds
 
-    const row0 = pertoRows[0];
-    const row1 = pertoRows[1];
+    // Remove as 3 células de dados da row0
+    const dataCells0 = row0.querySelectorAll('td:not(.group-label):not(.eye-label)');
+    dataCells0.forEach(td => td.remove());
 
-    // Remove eye-label and data cells from row0, insert AD cell
-    const cells0 = row0.querySelectorAll('td:not(.group-label)');
-    cells0.forEach(td => td.remove());
+    // Remove as 3 células de dados da row1
+    const dataCells1 = row1.querySelectorAll('td:not(.eye-label)');
+    dataCells1.forEach(td => td.remove());
+
+    // Cria célula AD com colspan=3 e rowspan=2
     const adTd = document.createElement('td');
-    adTd.colSpan = 4;
+    adTd.colSpan = 3;
+    adTd.rowSpan = 2;
     adTd.style.textAlign = 'center';
-    adTd.style.padding = '13px 14px';
+    adTd.style.verticalAlign = 'middle';
+    adTd.style.borderLeft = '1px solid var(--border)';
     adTd.innerHTML = '<span class="ad-label">AD</span><span class="ad-value"> ' + fmtNum(adicao) + '</span>';
     row0.appendChild(adTd);
-
-    // Hide row1 entirely
-    row1.style.display = 'none';
-
-    // Also remove the group-label rowspan visual gap
-    const groupLabel = row0.querySelector('.group-label');
-    if (groupLabel) groupLabel.rowSpan = 1;
   }
   // else: PADRÃO sem adição — perto fica com traços (padrão do HTML)
 
