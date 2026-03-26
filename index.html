@@ -239,6 +239,25 @@
       color: var(--muted) !important;
     }
 
+    /* eye-label: OD/OE cell — uniform style, no bold difference */
+    .rx-table td.eye-label {
+      text-align: center !important;
+      font-size: 11px !important;
+      font-weight: 600 !important;
+      letter-spacing: 0.8px !important;
+      text-transform: uppercase !important;
+      color: var(--muted) !important;
+      background: transparent !important;
+      border-right: 1px solid var(--border) !important;
+      width: 44px !important;
+    }
+
+    /* override nth-child zebra on longe/perto rows */
+    .rx-table tr.row-longe { background: #fff !important; }
+    .rx-table tr.row-longe:nth-child(even) { background: #f4f8fd !important; }
+    .rx-table tr.row-perto { background: #f8fafc !important; }
+    .rx-table tr.row-perto:nth-child(even) { background: #eef4fb !important; }
+
     .rx-table td.empty {
       color: #c0cfe0;
       font-size: var(--data-size);
@@ -573,28 +592,28 @@
           </tr>
         </thead>
         <tbody>
-          <tr>
+          <tr class="row-longe">
             <td class="group-label" rowspan="2">Longe</td>
-            <td>OD</td>
+            <td class="eye-label">OD</td>
             <td>—</td>
             <td>—</td>
             <td>—</td>
           </tr>
-          <tr>
-            <td>OE</td>
+          <tr class="row-longe">
+            <td class="eye-label">OE</td>
             <td>—</td>
             <td>—</td>
             <td>—</td>
           </tr>
-          <tr>
+          <tr class="row-perto">
             <td class="group-label perto" rowspan="2">Perto</td>
-            <td>OD</td>
+            <td class="eye-label">OD</td>
             <td id="p-esf-od">—</td>
             <td id="p-cil-od">—</td>
             <td id="p-eixo-od">—</td>
           </tr>
-          <tr>
-            <td>OE</td>
+          <tr class="row-perto">
+            <td class="eye-label">OE</td>
             <td id="p-esf-oe">—</td>
             <td id="p-cil-oe">—</td>
             <td id="p-eixo-oe">—</td>
