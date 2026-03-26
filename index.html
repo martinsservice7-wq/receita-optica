@@ -220,6 +220,23 @@
       border-right: 1px solid var(--border);
     }
 
+    .rx-table td.group-label {
+      text-align: center !important;
+      font-size: 11px !important;
+      font-weight: 700 !important;
+      letter-spacing: 1px !important;
+      text-transform: uppercase !important;
+      color: #fff !important;
+      background: var(--navy) !important;
+      border-right: 1px solid var(--border);
+      width: 52px;
+      vertical-align: middle;
+    }
+
+    .rx-table td.group-label.perto {
+      background: var(--accent) !important;
+    }
+
     .rx-table td.empty {
       color: #c0cfe0;
       font-size: var(--data-size);
@@ -497,51 +514,91 @@
         <span class="field-label">Paciente</span>
         <span class="field-value" id="paciente">—</span>
       </div>
-      <div class="badge" id="tipo">—</div>
-    </div>
-
-    <!-- META -->
-    <div class="meta-row" style="grid-template-columns: 1fr;">
-      <div class="meta-card">
-        <div class="field-label">Unidade</div>
-        <div class="field-value" id="unidade">—</div>
+      <div class="field-group" style="text-align:right;">
+        <span class="field-label">Unidade</span>
+        <span class="field-value" id="unidade">—</span>
       </div>
     </div>
 
-    <!-- RX TABLE -->
-    <div class="section-title">Graduação</div>
-    <table class="rx-table">
-      <thead>
-        <tr>
-          <th></th>
-          <th>Esférico</th>
-          <th>Cilíndrico</th>
-          <th>Eixo</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td>OD</td>
-          <td id="esf-od">—</td>
-          <td id="cil-od">—</td>
-          <td id="eixo-od">—</td>
-        </tr>
-        <tr>
-          <td>OE</td>
-          <td id="esf-oe">—</td>
-          <td id="cil-oe">—</td>
-          <td id="eixo-oe">—</td>
-        </tr>
-      </tbody>
-    </table>
+    <!-- RX TABLE: padrão (longe) -->
+    <div id="rx-padrao">
+      <div class="section-title">Graduação</div>
+      <table class="rx-table">
+        <thead>
+          <tr>
+            <th></th>
+            <th>Esférico</th>
+            <th>Cilíndrico</th>
+            <th>Eixo</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>OD</td>
+            <td id="esf-od">—</td>
+            <td id="cil-od">—</td>
+            <td id="eixo-od">—</td>
+          </tr>
+          <tr>
+            <td>OE</td>
+            <td id="esf-oe">—</td>
+            <td id="cil-oe">—</td>
+            <td id="eixo-oe">—</td>
+          </tr>
+        </tbody>
+      </table>
 
-    <!-- ADDITION -->
-    <div class="addition-row" id="addition-block">
-      <div>
-        <div class="add-label">Adição</div>
+      <!-- ADDITION -->
+      <div class="addition-row" id="addition-block">
+        <div>
+          <div class="add-label">Adição</div>
+        </div>
+        <div class="add-value" id="adicao">—</div>
+        <div class="add-desc">Valor da adição para lentes progressivas.</div>
       </div>
-      <div class="add-value" id="adicao">—</div>
-      <div class="add-desc">Valor da adição para lentes progressivas.</div>
+    </div>
+
+    <!-- RX TABLE: somente para perto -->
+    <div id="rx-perto" style="display:none;">
+      <div class="section-title">Graduação</div>
+      <table class="rx-table">
+        <thead>
+          <tr>
+            <th colspan="2"></th>
+            <th>Esférico</th>
+            <th>Cilíndrico</th>
+            <th>Eixo</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="group-label" rowspan="2">Longe</td>
+            <td>OD</td>
+            <td>—</td>
+            <td>—</td>
+            <td>—</td>
+          </tr>
+          <tr>
+            <td>OE</td>
+            <td>—</td>
+            <td>—</td>
+            <td>—</td>
+          </tr>
+          <tr>
+            <td class="group-label perto" rowspan="2">Perto</td>
+            <td>OD</td>
+            <td id="p-esf-od">—</td>
+            <td id="p-cil-od">—</td>
+            <td id="p-eixo-od">—</td>
+          </tr>
+          <tr>
+            <td>OE</td>
+            <td id="p-esf-oe">—</td>
+            <td id="p-cil-oe">—</td>
+            <td id="p-eixo-oe">—</td>
+          </tr>
+        </tbody>
+      </table>
     </div>
 
     <!-- OBSERVAÇÃO -->
@@ -621,20 +678,47 @@
   const proximaFormatada = proximaConsulta.toLocaleDateString('pt-BR');
 
   // ── CAMPOS BÁSICOS ──
-  set('paciente',  getParam('paciente'));
-  set('tipo',      getParam('tipo') || 'Simples');
-  set('unidade',   getParam('unidade'));
-  set('sig-name',  getParam('optometrista') || 'Optometrista');
-  set('eixo-od',   getParam('eixo_od'));
-  set('eixo-oe',   getParam('eixo_oe'));
+  set('paciente', getParam('paciente'));
+  set('unidade',  getParam('unidade'));
+  set('sig-name', getParam('optometrista') || 'Optometrista');
 
-  setHTML('esf-od', fmtNum(getParam('esf_od')));
-  setHTML('cil-od', fmtNum(getParam('cil_od')));
-  setHTML('esf-oe', fmtNum(getParam('esf_oe')));
-  setHTML('cil-oe', fmtNum(getParam('cil_oe')));
+  const tipo = (getParam('tipo') || '').toUpperCase().trim();
+  const isPerto = tipo === 'SOMENTE PARA PERTO';
 
-  const adicao = getParam('adicao');
-  setHTML('adicao', adicao ? fmtNum(adicao) : '—');
+  if (isPerto) {
+    // Mostra tabela perto/longe, esconde tabela padrão
+    document.getElementById('rx-padrao').style.display = 'none';
+    document.getElementById('rx-perto').style.display  = 'block';
+
+    const esf_od = fmtNum(getParam('esf_od'));
+    const cil_od = fmtNum(getParam('cil_od'));
+    const eixo_od = getParam('eixo_od') || '—';
+    const esf_oe = fmtNum(getParam('esf_oe'));
+    const cil_oe = fmtNum(getParam('cil_oe'));
+    const eixo_oe = getParam('eixo_oe') || '—';
+
+    setHTML('p-esf-od',  esf_od);
+    setHTML('p-cil-od',  cil_od);
+    set('p-eixo-od', eixo_od);
+    setHTML('p-esf-oe',  esf_oe);
+    setHTML('p-cil-oe',  cil_oe);
+    set('p-eixo-oe', eixo_oe);
+  } else {
+    // Tabela padrão (longe)
+    set('eixo-od', getParam('eixo_od'));
+    set('eixo-oe', getParam('eixo_oe'));
+    setHTML('esf-od', fmtNum(getParam('esf_od')));
+    setHTML('cil-od', fmtNum(getParam('cil_od')));
+    setHTML('esf-oe', fmtNum(getParam('esf_oe')));
+    setHTML('cil-oe', fmtNum(getParam('cil_oe')));
+
+    const adicao = getParam('adicao');
+    if (adicao) {
+      setHTML('adicao', fmtNum(adicao));
+    } else {
+      document.getElementById('addition-block').style.display = 'none';
+    }
+  }
 
   // ── BULLET RETORNO ──
   const elRetorno = document.getElementById('bullets-retorno');
