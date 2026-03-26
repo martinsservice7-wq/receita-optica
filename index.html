@@ -712,28 +712,15 @@
     setHTML('esf-od', '—'); setHTML('cil-od', '—'); set('eixo-od', '—');
     setHTML('esf-oe', '—'); setHTML('cil-oe', '—'); set('eixo-oe', '—');
   } else if (adicao) {
-    // AD centralizado sobre OD+OE, sem traços: rowspan=2 colspan=3
+    // Estrutura idêntica: esvazia os traços e coloca AD na coluna central (cilíndrico) da linha OD
     const pertoRows = document.querySelectorAll('.row-perto');
-    const row0 = pertoRows[0];
-    const row1 = pertoRows[1];
-
-    // Remove as 3 células de dados de row0
-    row0.querySelectorAll('td:not(.group-label):not(.eye-label)').forEach(td => td.remove());
-    // Remove as 3 células de dados de row1
-    row1.querySelectorAll('td:not(.eye-label)').forEach(td => td.remove());
-
-    // Insere célula AD rowspan=2 colspan=3, mesmo estilo das demais
-    const adTd = document.createElement('td');
-    adTd.rowSpan = 2;
-    adTd.colSpan = 3;
-    adTd.style.cssText = 'text-align:center; vertical-align:middle; font-size:var(--data-size,14px); font-weight:var(--data-weight,600); color:var(--data-color,#111); border-left:1px solid var(--border,#c8d8ee); border-bottom:1px solid var(--border,#c8d8ee);';
-    row0.style.borderTop = '2px solid #a8bdd8';
-    adTd.textContent = 'AD ' + fmtNum(adicao);
-    row0.appendChild(adTd);
+    const cells0 = pertoRows[0].querySelectorAll('td:not(.group-label):not(.eye-label)');
+    const cells1 = pertoRows[1].querySelectorAll('td:not(.eye-label)');
+    cells0.forEach(td => { td.textContent = ''; });
+    cells1.forEach(td => { td.textContent = ''; });
+    if (cells0[1]) cells0[1].textContent = 'AD ' + fmtNum(adicao);
   }
-  // else: PADRÃO sem adição — perto fica com traços (padrão do HTML)
-
-  // ── BULLET RETORNO ──
+    // ── BULLET RETORNO ──
   const elRetorno = document.getElementById('bullets-retorno');
   if (elRetorno) {
     elRetorno.textContent = `* Retornar para próxima consulta em ${proximaFormatada}.`;
