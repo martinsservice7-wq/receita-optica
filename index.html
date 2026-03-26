@@ -713,11 +713,7 @@
     setHTML('cil-oe', fmtNum(getParam('cil_oe')));
 
     const adicao = getParam('adicao');
-    if (adicao) {
-      setHTML('adicao', fmtNum(adicao));
-    } else {
-      document.getElementById('addition-block').style.display = 'none';
-    }
+    setHTML('adicao', adicao ? fmtNum(adicao) : '—');
   }
 
   // ── BULLET RETORNO ──
