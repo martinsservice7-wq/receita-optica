@@ -258,6 +258,31 @@
     .rx-table tr.row-perto { background: #f8fafc !important; }
     .rx-table tr.row-perto:nth-child(even) { background: #eef4fb !important; }
 
+    /* ── AD row ── */
+    .rx-table tr.row-ad td.ad-cell {
+      background: #eef4fb !important;
+      border-top: 2px solid var(--border) !important;
+      border-bottom: 2px solid var(--border) !important;
+      padding: 10px 20px !important;
+      text-align: left !important;
+    }
+
+    .ad-label {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-right: 10px;
+    }
+
+    .ad-value {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--navy);
+      letter-spacing: 0.5px;
+    }
+
     .rx-table td.empty {
       color: #c0cfe0;
       font-size: var(--data-size);
@@ -541,42 +566,53 @@
       </div>
     </div>
 
-    <!-- RX TABLE: padrão (longe) -->
+    <!-- RX TABLE: padrão (longe + AD + perto) -->
     <div id="rx-padrao">
       <div class="section-title">Graduação</div>
       <table class="rx-table">
         <thead>
           <tr>
-            <th></th>
+            <th colspan="2"></th>
             <th>Esférico</th>
             <th>Cilíndrico</th>
             <th>Eixo</th>
           </tr>
         </thead>
         <tbody>
-          <tr>
-            <td>OD</td>
+          <tr class="row-longe">
+            <td class="group-label" rowspan="2">Longe</td>
+            <td class="eye-label">OD</td>
             <td id="esf-od">—</td>
             <td id="cil-od">—</td>
             <td id="eixo-od">—</td>
           </tr>
-          <tr>
-            <td>OE</td>
+          <tr class="row-longe">
+            <td class="eye-label">OE</td>
             <td id="esf-oe">—</td>
             <td id="cil-oe">—</td>
             <td id="eixo-oe">—</td>
           </tr>
+          <tr class="row-ad" id="row-ad-tr">
+            <td class="ad-cell" colspan="5">
+              <span class="ad-label">AD</span>
+              <span class="ad-value" id="adicao">—</span>
+            </td>
+          </tr>
+          <tr class="row-perto">
+            <td class="group-label perto" rowspan="2">Perto</td>
+            <td class="eye-label">OD</td>
+            <td>—</td>
+            <td>—</td>
+            <td>—</td>
+          </tr>
+          <tr class="row-perto">
+            <td class="eye-label">OE</td>
+            <td>—</td>
+            <td>—</td>
+            <td>—</td>
+          </tr>
         </tbody>
       </table>
-
-      <!-- ADDITION -->
-      <div class="addition-row" id="addition-block">
-        <div>
-          <div class="add-label">Adição</div>
-        </div>
-        <div class="add-value" id="adicao">—</div>
-        <div class="add-desc">Valor da adição para lentes progressivas.</div>
-      </div>
     </div>
 
     <!-- RX TABLE: somente para perto -->
@@ -735,6 +771,10 @@
 
     const adicao = getParam('adicao');
     setHTML('adicao', adicao ? fmtNum(adicao) : '—');
+    if (!adicao) {
+      const adRow = document.getElementById('row-ad-tr');
+      if (adRow) adRow.style.display = 'none';
+    }
   }
 
   // ── BULLET RETORNO ──
